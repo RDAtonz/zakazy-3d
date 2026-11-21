@@ -1,6 +1,6 @@
 {
- "name": "3D-печать",
- "short_name": "3D-печать",
+ "name": "3D-заказы",
+ "short_name": "3D-заказы",
  "start_url": "3D-%D0%B7%D0%B0%D0%BA%D0%B0%D0%B7%D1%8B.html",
  "scope": "./",
  "display": "standalone",

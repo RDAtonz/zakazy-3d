@@ -1,5 +1,5 @@
-<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex,nofollow"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="apple-mobile-web-app-title" content="3D-печать"><meta name="theme-color" content="#eef2ef" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#111514" media="(prefers-color-scheme: dark)"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-180.png"><link rel="icon" href="icon-192.png"><style>:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}</style></head><body>
-<title>3D-печать</title>
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex,nofollow"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="apple-mobile-web-app-title" content="3D-заказы"><meta name="theme-color" content="#eef0f6" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#111514" media="(prefers-color-scheme: dark)"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-180.png"><link rel="icon" href="icon-192.png"><style>:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}</style></head><body>
+<title>3D-заказы</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700&family=Geologica:wght@500;600;700&display=swap">
@@ -573,6 +573,9 @@ body.role-staff #goalBtn, body.role-staff #pTableBox, body.role-staff #pNew, bod
 /* Нурдаулет: ведёт свои заказы, видит статистику, дизайн и сроки; без расчётов с Тимуром и без скана */
 body.role-mgr #navPrint [data-v="p-settle"], body.role-mgr .no-mgr { display: none !important; }
 @media (max-width: 999px) { body.role-mgr #navPrint:not([hidden]) { grid-template-columns: repeat(4, 1fr); } }
+/* вкладка «Нурдаулет» — только у меня */
+body.role-staff #navPrint .owner-tab, body.role-timur #navPrint .owner-tab { display: none !important; }
+@media (max-width: 999px) { body:not(.role-staff):not(.role-timur) #navPrint:not([hidden]) { grid-template-columns: repeat(6, 1fr); } #navPrint button { font-size: 10.5px; } }
 </style>
 
 <aside class="side" id="side" hidden></aside>
@@ -580,105 +583,18 @@ body.role-mgr #navPrint [data-v="p-settle"], body.role-mgr .no-mgr { display: no
 <div class="wrap">
   <header class="top">
     <div class="brand">
-      <div class="mark" aria-hidden="true">₸</div>
+      <div class="mark" aria-hidden="true" style="font-size:15px">3D</div>
       <div class="brand-t"><b id="hello">Моя зарплата</b><span id="sub">Загружаю…</span></div>
     </div>
     <div class="top-actions">
-      <button class="icon-btn" id="goalBtn" aria-label="Календарь сроков заказов" title="Сроки заказов"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></button>
       <button class="icon-btn" id="logoutBtn" aria-label="Выйти из аккаунта" title="Выйти из аккаунта" hidden><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg></button>
       <button class="icon-btn" id="refresh" aria-label="Обновить данные"><svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg></button>
     </div>
   </header>
 
-  <nav class="sections" id="sections" aria-label="Работа">
-    <button data-s="all" aria-pressed="true">Общее</button>
-    <button data-s="coach" aria-pressed="false">Тренерство</button>
-    <button data-s="print" aria-pressed="false">3D-печать</button>
-  </nav>
-
   <div id="notice"></div>
 
   <!-- ОБЩЕЕ -->
-  <section id="v-all" class="view" hidden style="flex-direction:column;gap:18px">
-    <div class="monthnav">
-      <button id="aPrev" aria-label="Предыдущий месяц">‹</button>
-      <div class="mname" id="aName">—</div>
-      <button id="aNext" aria-label="Следующий месяц">›</button>
-    </div>
-    <div class="hero">
-      <div class="label">Зарплата за месяц, обе работы</div>
-      <div class="big num" id="aTotal">—</div>
-      <div class="split" id="aSplit"></div>
-      <div class="fc" id="aFc" hidden></div>
-      <div class="goal" id="aGoalBox" hidden>
-        <div class="goal-bar"><i id="aGoalFill" style="width:0"></i></div>
-        <div class="goal-t"><span id="aGoalL"></span><span id="aGoalR"></span></div>
-      </div>
-    </div>
-    <div class="grid2" id="aKpi"></div>
-    <button class="card jobcard" id="aCoach"></button>
-    <button class="card jobcard" id="aPrint"></button>
-    <div class="card chart"><h3>По месяцам</h3><div class="legend"><span><i style="background:var(--accent)"></i>Тренерство</span><span><i style="background:var(--blue)"></i>3D-печать</span></div><div id="aChart"></div></div>
-  </section>
-
-  <!-- ГЛАВНАЯ -->
-  <section id="v-home" class="view" style="display:flex;flex-direction:column;gap:18px">
-    <div class="monthnav">
-      <button id="prev" aria-label="Предыдущий месяц">‹</button>
-      <div class="mname" id="mname">—</div>
-      <button id="next" aria-label="Следующий месяц">›</button>
-    </div>
-    <div class="hero">
-      <div class="label">Заработано за месяц</div>
-      <div class="big num" id="earned">—</div>
-      <div class="goal" id="goalBox" hidden>
-        <div class="goal-bar"><i id="goalFill" style="width:0"></i></div>
-        <div class="goal-t"><span id="goalL"></span><span id="goalR"></span></div>
-      </div>
-    </div>
-    <div class="grid2">
-      <div class="cell"><span class="label">Получено</span><span class="v num" id="received">—</span></div>
-      <div class="cell owe" id="oweCell"><span class="label">Ещё должны</span><span class="v num" id="owe">—</span></div>
-    </div>
-    <div class="facts" id="facts"></div>
-    <h2 class="sec">Записи за месяц</h2>
-    <div class="feed" id="feed"><div class="empty">Загружаю данные из таблицы «Зарплата»…</div></div>
-  </section>
-
-  <!-- СТАТИСТИКА -->
-  <section id="v-stats" class="view" hidden style="flex-direction:column;gap:18px">
-    <div class="seg" id="period"></div>
-    <div class="grid2" id="kpis"></div>
-    <div class="card chart"><h3>По месяцам</h3><div class="hint">Пунктир — среднее за период. Нажмите на столбик, чтобы открыть месяц.</div><div id="chMonths"></div></div>
-    <div class="card"><h3>Из чего складывается</h3><div class="hbars" id="mix"></div></div>
-    <div class="card chart"><h3>Сколько оплат в месяц</h3><div class="hint" id="cntHint"></div><div id="chCount"></div></div>
-    <div class="card chart"><h3>В какие дни платят</h3><div class="hint">Сколько оплат пришлось на каждый день недели.</div><div id="chDow"></div></div>
-    <div class="card"><h3>По годам</h3><div class="tbl-wrap"><table id="years"></table></div></div>
-  </section>
-
-  <!-- ДЕТИ -->
-  <section id="v-kids" class="view" hidden style="flex-direction:column;gap:14px">
-    <input class="search" id="kidSearch" type="search" placeholder="Поиск по имени" autocomplete="off">
-    <div class="seg" id="kidSort"></div>
-    <div class="card" id="renewCard" hidden><h3>Скоро продление</h3><div class="hint">Платили 25–40 дней назад и пока не продлили — абонемент, скорее всего, заканчивается.</div><div class="ops" id="renewList" style="border:0"></div></div>
-    <div class="ops" id="kidList"></div>
-    <div class="status" id="kidNote"></div>
-  </section>
-
-  <!-- РАСЧЁТЫ -->
-  <section id="v-settle" class="view" hidden style="flex-direction:column;gap:18px">
-    <div class="grid2" id="settleKpi"></div>
-    <div class="card">
-      <h3>Чужие дети</h3>
-      <div class="hint">Когда ребёнок из группы другого тренера приходит к тебе, ты получаешь за занятие (плюс). Когда твой ребёнок ходит к другому тренеру, сумма вычитается (минус). В конце месяца тренеры рассчитываются разницей.</div>
-      <div class="tbl-wrap"><table id="swapTbl"></table></div>
-    </div>
-    <h2 class="sec">Долг по месяцам</h2>
-    <div class="ops" id="monthDebts"></div>
-    <div class="status">Если с тренером уже рассчитались, а в таблицу это не попало, нажмите «Рассчитались» — месяц закроется.</div>
-  </section>
-
-  <!-- 3D: ЗАКАЗЫ -->
   <section id="v-p-orders" class="view" hidden style="flex-direction:column;gap:16px">
     <div class="monthnav">
       <button id="pPrev" aria-label="Предыдущий месяц">‹</button>
@@ -759,69 +675,18 @@ body.role-mgr #navPrint [data-v="p-settle"], body.role-mgr .no-mgr { display: no
     <div class="status" id="dNote">Если дизайнер — ты (имя «Асет»), оплата за дизайн добавляется к твоему доходу. За скан половина идёт Тимуру, половина — тому, кто сканировал.</div>
   </section>
 
-  <!-- 3D: РАСЧЁТЫ -->
-  <section id="v-p-settle" class="view" hidden style="flex-direction:column;gap:18px">
-    <div class="grid2" id="psKpi"></div>
-    <div class="status" id="psNote" style="text-align:left">Тимур рассчитывается за месяц целиком и только когда все заказы этого месяца переданы клиентам (частями не платит). Доход считается в месяце, когда заказ был принят.</div>
-    <div class="ops" id="psMonths"></div>
-    <h2 class="sec">Ждут оплаты клиента</h2>
-    <div class="ops" id="psClients"></div>
-  </section>
-
   <div class="status" id="status"></div>
 </div>
 
 <button class="fab" id="fab" aria-label="Добавить запись">+</button>
 
 <div class="tabbar" id="tabbar">
-  <nav aria-label="Тренерство" id="navCoach">
-    <button data-v="home" aria-current="page"><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg>Главная</button>
-    <button data-v="stats"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Статистика</button>
-    <button data-v="kids"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.5 3.4-5.5 6.5-5.5s5.7 2 6.5 5.5"/><circle cx="17.5" cy="9.5" r="2.5"/><path d="M16.5 14.6c2.6.1 4.4 1.9 5 4.9"/></svg>Дети</button>
-    <button data-v="settle"><svg viewBox="0 0 24 24"><path d="M7 7h12l-3-3M17 17H5l3 3"/></svg>Расчёты</button>
-  </nav>
   <nav aria-label="3D-печать" id="navPrint" hidden>
     <button data-v="p-orders"><svg viewBox="0 0 24 24"><path d="M6 3h12l2 4H4z"/><rect x="4" y="7" width="16" height="9" rx="1"/><path d="M9 16v5h6v-5"/></svg>Заказы</button>
     <button data-v="p-stats"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Статистика</button>
     <button data-v="p-des"><svg viewBox="0 0 24 24"><path d="M3 21l3-1 11-11-2-2L4 18z"/><path d="M14 6l2-2 4 4-2 2"/></svg>Дизайн и скан</button>
     <button data-v="p-cal"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Сроки</button>
-    <button data-v="p-settle"><svg viewBox="0 0 24 24"><path d="M7 7h12l-3-3M17 17H5l3 3"/></svg>Расчёты</button>
   </nav>
-</div>
-
-<div class="sheet-bg" id="sheetBg" hidden>
-  <form class="sheet" id="addForm" autocomplete="off">
-    <h2>Новая запись</h2>
-    <div class="field">
-      <label for="fType">Что добавить</label>
-      <select id="fType">
-        <option value="Чужой ребёнок">Чужой ребёнок</option>
-        <option value="Оплата">Оплата без чека</option>
-        <option value="Возврат">Возврат</option>
-        <option value="Наличные">Получил наличными</option>
-        <option value="Расчёт">Получил переводом (расчёт)</option>
-        <option value="Корректировка">Долг / корректировка</option>
-      </select>
-    </div>
-    <div class="row2" id="fSwap">
-      <div class="field"><label for="fDir">Направление</label>
-        <select id="fDir"><option value="in">Чужой пришёл ко мне (+)</option><option value="out">Мой ушёл к другому (−)</option></select></div>
-      <div class="field"><label for="fCoach">Другой тренер</label><select id="fCoach"></select></div>
-    </div>
-    <div class="row2">
-      <div class="field"><label for="fAmount" id="fAmountL">Сумма, ₸</label><input id="fAmount" inputmode="decimal" placeholder="1531"></div>
-      <div class="field" id="fCountF"><label for="fCount">Занятий</label><input id="fCount" inputmode="numeric" value="1"></div>
-    </div>
-    <div class="row2">
-      <div class="field"><label for="fWho">Имя ребёнка / за что</label><input id="fWho" placeholder="Необязательно"></div>
-      <div class="field"><label for="fDate">Дата</label><input id="fDate" type="date"></div>
-    </div>
-    <div class="err" id="fErr" hidden></div>
-    <div class="row2">
-      <button type="button" class="btn ghost" id="fCancel">Отмена</button>
-      <button type="submit" class="btn" id="fSave">Записать</button>
-    </div>
-  </form>
 </div>
 
 <div class="sheet-bg" id="ordBg" hidden>
@@ -888,44 +753,16 @@ body.role-mgr #navPrint [data-v="p-settle"], body.role-mgr .no-mgr { display: no
 </div>
 <datalist id="oClients"></datalist><datalist id="oDesigners"></datalist><datalist id="oScanners"></datalist>
 
-<div class="sheet-bg" id="opBg" hidden>
-  <form class="sheet" id="opForm" autocomplete="off">
-    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><h2>Изменить запись</h2><span class="status" id="opSrc"></span></div>
-    <div class="row2">
-      <div class="field"><label for="eType">Тип</label><select id="eType"></select></div>
-      <div class="field"><label for="eDate">Дата</label><input id="eDate" type="date"></div>
-    </div>
-    <div class="field"><label for="eKids">Имя ребёнка</label><input id="eKids" list="eKidsList" placeholder="Необязательно"></div>
-    <div class="field"><label for="eDesc">Описание</label><input id="eDesc" placeholder="Необязательно"></div>
-    <div class="row2">
-      <div class="field"><label for="eAcc">Заработано (начислено), ₸</label><input id="eAcc" inputmode="decimal" placeholder="0"></div>
-      <div class="field"><label for="eRec">Получено на руки, ₸</label><input id="eRec" inputmode="decimal" placeholder="0"></div>
-    </div>
-    <div class="row2">
-      <div class="field"><label for="eMonth">В какой месяц считать</label><input id="eMonth" type="month"></div>
-      <div class="field" style="justify-content:flex-end"><span class="status" style="text-align:left" id="eHint"></span></div>
-    </div>
-    <div class="err" id="eErr" hidden></div>
-    <div class="row2">
-      <button type="button" class="btn ghost" id="eCancel">Закрыть</button>
-      <button type="submit" class="btn" id="eSave">Сохранить</button>
-    </div>
-    <div class="confirm" id="eDelBox" style="justify-content:center"><button type="button" class="btn ghost sm" id="eDel" style="color:var(--red)">Удалить запись</button></div>
-  </form>
-</div>
-<datalist id="eKidsList"></datalist>
-
-<div class="sheet-bg" id="goalBg" hidden>
-  <form class="sheet" id="goalForm" autocomplete="off">
-    <h2>Цель на месяц</h2>
-    <div class="field"><label for="gAmount">Сколько хочу зарабатывать в месяц (обе работы на «Общем», тренерство — в его разделе), ₸</label><input id="gAmount" inputmode="numeric" placeholder="400000"></div>
-    <div class="status" style="text-align:left">Цель хранится только на этом устройстве. Чтобы убрать её, оставьте поле пустым.</div>
-    <div class="row2"><button type="button" class="btn ghost" id="gCancel">Отмена</button><button type="submit" class="btn">Сохранить</button></div>
-  </form>
-</div>
-
+<style>
+:root { --bg:#EEF0F6; --surface-2:#F5F6FA; --line:#DCDFEA; --accent:#3446B0; --accent-soft:#E2E5F7; --bar:#C6CCEB;
+  --hero:#1B225C; --hero-2:#34449F; --tabbar:rgba(255,255,255,.9); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg:#0A0B12; --surface:#13151F; --surface-2:#191C28; --line:#252938;
+  --accent:#8F9BFF; --accent-soft:#1D2142; --bar:#2C3258; --hero:#151A45; --hero-2:#2A3480; --tabbar:rgba(19,21,31,.92); } }
+:root[data-theme="dark"] { --bg:#0A0B12; --surface:#13151F; --surface-2:#191C28; --line:#252938;
+  --accent:#8F9BFF; --accent-soft:#1D2142; --bar:#2C3258; --hero:#151A45; --hero-2:#2A3480; --tabbar:rgba(19,21,31,.92); }
+</style>
 <script>
-const SHEET_ID = '1B68sIA2xlK9v95zkupvEP8iahwqMCWFFJqG8pA0tZTo';
+const SHEET_ID = '';
 const API_URL = 'https://script.google.com/macros/s/AKfycbzmjShQMZKGDjF_XWcvEA80tWXthpz98OFBBW_1HPpsfcLNzjaLtiMCiIn34nwx4FC5ow/exec';
 const APP_TITLE = document.title || 'Моя зарплата'; // ссылка на веб-приложение Google (для версии на GitHub)
 let src = null; // 'mcp' — внутри Claude, 'api' — на GitHub с ключом
@@ -936,13 +773,14 @@ const MONTHS_GEN = ['января','февраля','марта','апреля',
 const MNAMES_S = k => { const [y, m] = k.split('-'); const n = MONTHS[+m - 1]; return n[0].toUpperCase() + n.slice(1) + (+y !== new Date().getFullYear() ? ' ' + y : ''); };
 const MSHORT = ['янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек'];
 const DOW = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
-const COACHES = ['Бектас Ж.', 'Айдар'];
+const COACHES = ['Работа 1', 'Айдар'];
 
 let rows = [], works = [], work = null, month = null, mcp = null, loaded = false, view = 'home';
 let period = '12', kidSort = 'recent', openConfirm = null;
-const $ = id => document.getElementById(id);
-const store = { get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
-  set(k, v) { try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch (e) {} } };
+const $ = (() => { const g = {}; return id => document.getElementById(id) || g[id] || (g[id] = document.createElement('div')); })();   // удалённые разделы — пустышки
+const SP = 'z3d_';   // свой вход: не пересекается с сайтом «Моя зарплата»
+const store = { get(k) { try { return localStorage.getItem(SP + k); } catch (e) { return null; } },
+  set(k, v) { try { v == null ? localStorage.removeItem(SP + k) : localStorage.setItem(SP + k, v); } catch (e) {} } };
 
 /* ---------- данные ---------- */
 function num(v) {
@@ -1242,7 +1080,7 @@ function renderSettle() {
   const swaps = all.filter(r => r.c === 'swap');
   const last6 = monthList().slice(-6).reverse();
   const coachOf = r => { const t = (r.desc + ' ' + r.kids).toLowerCase();
-    if (/айдар/.test(t)) return 'Айдар'; return 'Бектас Ж.'; };
+    if (/айдар/.test(t)) return 'Айдар'; return 'Работа 1'; };
   $('swapTbl').innerHTML = '<tr><th>Месяц</th><th class="r">Пришли ко мне</th><th class="r">Мои ушли</th><th class="r">Итого</th></tr>' +
     last6.map(m => { const rs = swaps.filter(r => r.month === m); const pin = sum(rs.filter(r => r.acc > 0), r => r.acc), pout = sum(rs.filter(r => r.acc < 0), r => r.acc);
       return `<tr><td>${mLabel(m)}</td><td class="r num">${pin ? '+' + money(pin) : '—'}</td><td class="r num">${pout ? signed(pout) : '—'}</td><td class="r num"><b>${pin + pout ? signed(pin + pout) : '0'}</b></td></tr>`; }).join('')
@@ -1280,7 +1118,7 @@ const STAFF_NAME = { amir: 'Амир', alina: 'Алина', nurdaulet: 'Нурд
 const MGR = () => role === 'nurdaulet';   // Нурдаулет: свои заказы целиком, без моих данных
 const MGR_VIEWS = ['p-orders', 'p-stats', 'p-des', 'p-cal'];
 const okView = v => v === 'p-orders' || (MGR() && MGR_VIEWS.includes(v));
-let role = 'owner'; try { const sr = store.get('role'); if (STAFF_NAME[sr]) role = sr; } catch (e) {}
+let role = 'nurdaulet';   // этот сайт — только для Нурдаулета
 let limited = false; try { limited = store.get('role') === 'timur'; } catch (e) {}   // Тимур: всё по 3D-печати, без тренерства и общей статистики
 function applyRole() {
   const a = role !== 'owner';
@@ -1302,6 +1140,7 @@ function render() {
   if (view === 'p-stats') renderPStats();
   if (view === 'p-des') renderDes();
   if (view === 'p-settle') renderPSettle();
+  if (view === 'p-nurd') renderNurd();
   if (view === 'p-cal') renderCal();
   if (view === 'home') renderHome();
   if (view === 'stats') renderStats();
@@ -1311,6 +1150,7 @@ function render() {
 function go(v) {
   if (role !== 'owner' && !okView(v)) v = 'p-orders';   // Амиру и Алине — только список заказов, Нурдаулету ещё статистика, дизайн и сроки
   if (limited && !v.startsWith('p-')) v = 'p-orders';
+  if (v === 'p-nurd' && (role !== 'owner' || limited)) v = 'p-orders';
   view = v;
   document.querySelectorAll('.view').forEach(s => { s.hidden = s.id !== 'v-' + v; s.style.display = s.hidden ? '' : 'flex'; });
   playView();
@@ -1391,7 +1231,8 @@ async function apiLoad() {
   let res = null;
   try { res = await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ key, action: 'rows' }) }).then(r => r.json()); }
   catch (e) { onError({ code: 'server_unavailable' }); return; }
-  if (!res.ok) { if (res.error === 'bad_key') { store.set('appKey', null); store.set('role', null); role = 'owner'; limited = false; applyRole(); askKey('Неверный ключ'); } else onError({ code: 'tool_error', message: res.error }); return; }
+  if (!res.ok) { if (res.error === 'bad_key') { store.set('appKey', null); store.set('role', null); askKey('Неверный ключ'); } else onError({ code: 'tool_error', message: res.error }); return; }
+  if (res.role !== 'nurdaulet') { store.set('appKey', null); askKey('Этот ключ не для этого сайта'); return; }
   const lim = res.role === 'timur'; if (lim !== limited) { limited = lim; try { store.set('role', lim ? 'timur' : null); } catch (e) {} applyRole(); }
   const r0 = STAFF_NAME[res.role] ? res.role : 'owner'; if (r0 !== role) { role = r0; try { store.set('role', r0 === 'owner' ? null : r0); } catch (e) {} applyRole(); }
   setLocked(false);
@@ -1764,7 +1605,7 @@ function renderAll() {
   if (goal) { const p = Math.max(0, Math.min(1, total / goal)); $('aGoalFill').style.width = (p * 100).toFixed(1) + '%';
     $('aGoalL').textContent = 'Цель ' + money(goal) + ' ₸ · ' + Math.round(p * 100) + '%'; $('aGoalR').textContent = total >= goal ? 'выполнена' : 'осталось ' + money(goal - total) + ' ₸'; }
   const mNames = l => l.map(x => MNAMES_S(x.m)).join(', ');
-  $('aKpi').innerHTML = `<button class="cell ${coSum < 1 ? 'ok' : 'owe'}" id="aOweC"><span class="label">Бектас Ж. должен</span><span class="v num">${money(Math.abs(coSum))} ₸</span><span class="s">${coSum < 1 ? (coSum <= -1 ? 'переплата' : 'всё получено') : 'тренерство · ' + mNames(co.filter(x => x.v > 0))}</span></button>
+  $('aKpi').innerHTML = `<button class="cell ${coSum < 1 ? 'ok' : 'owe'}" id="aOweC"><span class="label">Работа 1 должен</span><span class="v num">${money(Math.abs(coSum))} ₸</span><span class="s">${coSum < 1 ? (coSum <= -1 ? 'переплата' : 'всё получено') : 'тренерство · ' + mNames(co.filter(x => x.v > 0))}</span></button>
     <button class="cell ${tim < 1 ? '' : 'owe'}" id="aOweP"><span class="label">Тимур должен</span><span class="v num">${money(tim)} ₸</span><span class="s">${tim >= 1 ? '3D · ' + mNames(pay) : timWait >= 1 ? 'пока нечего: не закрыт' + (waitM.length > 1 ? 'ы ' : ' ') + mNames(waitM) : 'всё рассчитано'}</span></button>
     <div class="cell"><span class="label">3D ждёт закрытия месяца</span><span class="v num">${money(timWait)} ₸</span><span class="s">${waitM.length ? waitM.map(s => MNAMES_S(s.m) + ': не передано ' + s.open.length).join(' · ') : 'нет'}</span></div>
     <div class="cell ${overN ? 'owe' : ''}"><span class="label">Готовы, ждут выдачи</span><span class="v num">${readyN}</span><span class="s">${overN ? overN + ' заказа просрочено' : 'просроченных нет'}</span></div>`;
@@ -2216,6 +2057,41 @@ async function apiPost(body) {
   if (!res.ok) throw { code: res.error === 'bad_key' ? 'bad_key' : 'tool_error', message: res.error === 'already' ? 'Эту печать уже разобрали.' : res.error };
   return res;
 }
+
+/* ---------- 3D: ЗАКАЗЫ НУРДАУЛЕТА ---------- */
+let nMonth = null, nFilter = 'all';
+function renderNurd() {
+  const all = p3().filter(o => o.isNurd), now = mk(new Date());
+  const ms = [...new Set(all.map(o => o.month).concat([now]))].sort();
+  if (!nMonth || !ms.includes(nMonth)) nMonth = ms.includes(now) ? now : ms[ms.length - 1];
+  const i = ms.indexOf(nMonth);
+  $('nPrev').disabled = i <= 0; $('nNext').disabled = i >= ms.length - 1;
+  $('nName').innerHTML = mLabel(nMonth) + (nMonth === now ? '<small>текущий месяц</small>' : '');
+  if (!loaded3d) { $('nList').innerHTML = '<div class="empty" style="border:0">Загружаю заказы…</div>'; return; }
+  const list = all.filter(o => o.month === nMonth), cnt = list.filter(o => o.counts);
+  countTo($('nMine'), sum(cnt, o => o.myShare), '<small>₸</small>');
+  const act = list.filter(o => ACTIVE.includes(o.status)), owe = list.filter(o => o.clientOwes > 0);
+  $('nKpi').innerHTML = [
+    ['Заказов', String(list.filter(o => !o.void).length), act.length + ' в работе' + (list.some(o => o.overdue) ? ' · ' + list.filter(o => o.overdue).length + ' просроч.' : '')],
+    ['Выручка', money(sum(cnt, o => o.price)) + ' ₸', 'без отменённых'],
+    ['Нурдаулету (30%)', money(sum(cnt, o => o.amir)) + ' ₸', list.filter(o => o.done).length + ' передано клиентам'],
+    ['Тимуру (60%)', money(sum(cnt, o => o.partner)) + ' ₸', 'после пластика и дизайна'],
+    ['Пластик', (sum(list, o => o.grams) / 1000).toLocaleString('ru-RU', { maximumFractionDigits: 1 }) + ' кг', money(sum(list, o => o.material)) + ' ₸'],
+    ['Клиенты должны', money(sum(owe, o => o.clientOwes)) + ' ₸', owe.length + ' заказов']
+  ].map(([l, v, s]) => `<div class="cell"><span class="label">${l}</span><span class="v num">${v}</span><span class="s">${s}</span></div>`).join('');
+  const F = [['all', 'Все'], ['active', 'В работе'], ['ready', 'Готов, не передан'], ['done', 'Переданы'], ['late', 'Просрочены']];
+  $('nFilter').innerHTML = F.map(([v, t]) => `<button data-f="${v}" aria-pressed="${v === nFilter}">${t}</button>`).join('');
+  $('nFilter').querySelectorAll('button').forEach(b => b.onclick = () => { nFilter = b.dataset.f; renderNurd(); });
+  const show = list.filter(o => nFilter === 'all' || (nFilter === 'active' && ACTIVE.includes(o.status)) || (nFilter === 'ready' && o.ready) || (nFilter === 'done' && o.done) || (nFilter === 'late' && o.overdue))
+    .sort((a, b) => (b.date || 0) - (a.date || 0) || b.no - a.no);
+  $('nList').innerHTML = show.length ? show.map(ordLine).join('') : '<div class="empty" style="border:0">' + (all.length ? 'В этом месяце заказов Нурдаулета нет.' : 'У Нурдаулета пока нет заказов.') + '</div>';
+  $('nList').querySelectorAll('[data-id]').forEach(b => b.onclick = () => openOrder(b.dataset.id));
+  const rows = ms.filter(m => all.some(o => o.month === m)).reverse().map(m => { const l = all.filter(o => o.month === m && o.counts);
+    return `<tr><td>${mLabel(m)}</td><td class="r num">${l.length}</td><td class="r num">${money(sum(l, o => o.price))} ₸</td><td class="r num">${money(sum(l, o => o.amir))} ₸</td><td class="r num mine">${money(sum(l, o => o.myShare))} ₸</td></tr>`; });
+  $('nAll').innerHTML = '<tr><th>Месяц</th><th class="r">Заказов</th><th class="r">Выручка</th><th class="r">Ему</th><th class="r">Мне</th></tr>' + (rows.join('') || '<tr><td colspan="5" class="hint">Пока пусто.</td></tr>');
+}
+$('nPrev').onclick = () => { const ms = [...new Set(p3().filter(o => o.isNurd).map(o => o.month).concat([mk(new Date())]))].sort(), i = ms.indexOf(nMonth); if (i > 0) { nMonth = ms[i - 1]; renderNurd(); } };
+$('nNext').onclick = () => { const ms = [...new Set(p3().filter(o => o.isNurd).map(o => o.month).concat([mk(new Date())]))].sort(), i = ms.indexOf(nMonth); if (i < ms.length - 1) { nMonth = ms[i + 1]; renderNurd(); } };
 
 /* ---------- 3D: РАСЧЁТЫ ---------- */
 let psConfirm = null;
